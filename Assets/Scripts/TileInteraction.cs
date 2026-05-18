@@ -75,6 +75,7 @@ public class TileInteraction : MonoBehaviour
         if (miningProgress >= 1f)
         {
             groundTilemap.SetTile(cellPos, null);
+            ChunkManager.Instance.MarkTileRemoved(cellPos);
 
             Vector3 dropPos = groundTilemap.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0);
             GameObject drop = Instantiate(itemDropPrefab, dropPos, Quaternion.identity);
