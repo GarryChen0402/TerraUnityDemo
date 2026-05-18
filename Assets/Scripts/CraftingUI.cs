@@ -13,6 +13,7 @@ public class CraftingUI : MonoBehaviour
 
     [Header("Recipes")]
     [SerializeField] private CraftingRecipe[] allRecipes;
+    public CraftingRecipe[] AllRecipes => allRecipes;
 
     private bool isOpen;
     private CraftingStation activeStation;

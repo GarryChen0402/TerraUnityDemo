@@ -27,4 +27,6 @@ public class TileDataManager : MonoBehaviour
         tileDataMap.TryGetValue(tile, out var data);
         return data;
     }
+
+    public IReadOnlyList<TileData> AllTileData => tileDataList;
 }
