@@ -12,6 +12,15 @@ public abstract class EnemyBase : MonoBehaviour
     public float detectionRange = 6f;
     public float attackRange = 1f;
 
+    [Header("Hit Effects")]
+    public float knockbackForce = 5f;
+    public float knockbackDuration = 0.2f;
+    public float flashDuration = 0.15f;
+    public Color flashColor = Color.white;
+
+    protected bool isKnockedBack;
+    protected float knockbackTimer;
+
     [Header("Drops")]
     [SerializeField] protected GameObject itemDropPrefab;
     public ItemData[] dropItems;
@@ -40,6 +49,13 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Update()
     {
         if (currentState == EnemyState.Dead) return;
+
+        if (isKnockedBack)
+        {
+            knockbackTimer -= Time.deltaTime;
+            if (knockbackTimer <= 0)
+                isKnockedBack = false;
+        }
 
         switch (currentState)
         {
@@ -75,11 +91,27 @@ public abstract class EnemyBase : MonoBehaviour
         currentState = newState;
     }
 
-    public virtual void TakeDamage(int dmg)
+    public virtual void TakeDamage(int dmg, Vector2 attackerPosition)
     {
         currentHP -= dmg;
+
+        Vector2 knockbackDir = ((Vector2)transform.position - attackerPosition).normalized;
+        rb.velocity = new Vector2(knockbackDir.x * knockbackForce, rb.velocity.y + knockbackForce * 0.5f);
+        isKnockedBack = true;
+        knockbackTimer = knockbackDuration;
+
+        if (spriteRenderer != null)
+            StartCoroutine(HitFlash());
+
         if (currentHP <= 0)
             Die();
+    }
+
+    private System.Collections.IEnumerator HitFlash()
+    {
+        spriteRenderer.color = flashColor;
+        yield return new WaitForSeconds(flashDuration);
+        spriteRenderer.color = Color.white;
     }
 
     protected virtual void Die()

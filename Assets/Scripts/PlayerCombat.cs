@@ -49,7 +49,7 @@ public class PlayerCombat : MonoBehaviour
             float critMod = isCrit ? critMultiplier : 1f;
             int finalDamage = Mathf.RoundToInt(baseDamage * randomMultiplier * critMod);
 
-            enemyCollider.GetComponent<EnemyBase>()?.TakeDamage(finalDamage);
+            enemyCollider.GetComponent<EnemyBase>()?.TakeDamage(finalDamage, transform.position);
             Debug.Log($"{(isCrit ? "CRIT! " : "")}Hit {enemyCollider.name} for {finalDamage} damage");
         }
     }
@@ -65,7 +65,7 @@ public class PlayerCombat : MonoBehaviour
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
             attackPoint.position, attackRadius * 2f, enemyLayer);
         foreach (Collider2D hit in hitEnemies)
-            hit.GetComponent<EnemyBase>()?.TakeDamage(spellDamage);
+            hit.GetComponent<EnemyBase>()?.TakeDamage(spellDamage, transform.position);
     }
 
     private void OnDrawGizmosSelected()

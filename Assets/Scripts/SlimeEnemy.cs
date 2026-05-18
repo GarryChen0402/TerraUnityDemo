@@ -19,6 +19,8 @@ public class SlimeEnemy : EnemyBase
 
     protected override void OnPatrol()
     {
+        if (isKnockedBack) return;
+
         jumpTimer -= Time.deltaTime;
         patrolTimer -= Time.deltaTime;
 
@@ -40,6 +42,8 @@ public class SlimeEnemy : EnemyBase
 
     protected override void OnChase()
     {
+        if (isKnockedBack) return;
+
         jumpTimer -= Time.deltaTime;
 
         if (jumpTimer <= 0 && isGrounded)
