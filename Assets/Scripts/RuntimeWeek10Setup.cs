@@ -40,6 +40,7 @@ public static class RuntimeWeek10Setup
             EnsureRoomDetectorExists();
             EnsureShopUIExists();
             EnsureSaveManagerExists();
+            EnsureEnemySpawnerExists();
             LinkRoomDetectorReferences();
             Destroy(gameObject);
         }
@@ -124,6 +125,13 @@ public static class RuntimeWeek10Setup
             if (Object.FindObjectOfType<SaveManager>() != null) return;
             var go = new GameObject("SaveManager");
             go.AddComponent<SaveManager>();
+        }
+
+        private void EnsureEnemySpawnerExists()
+        {
+            if (Object.FindObjectOfType<EnemySpawner>() != null) return;
+            var go = new GameObject("EnemySpawner");
+            go.AddComponent<EnemySpawner>();
         }
 
         private void LinkRoomDetectorReferences()
