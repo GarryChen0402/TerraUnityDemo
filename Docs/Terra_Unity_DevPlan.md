@@ -27,12 +27,12 @@
 ## 前置准备（开始前完成）
 
 ### 安装清单
-- [ ] **Unity Hub** 最新版（从 unity.com/download 下载）
-- [ ] **Unity 2022.3 LTS**（在 Unity Hub 中安装，选 LTS 版本最稳定）
+- [x] **Unity Hub** 最新版（从 unity.com/download 下载）
+- [x] **Unity 2022.3 LTS**（在 Unity Hub 中安装，选 LTS 版本最稳定）
   - 安装时勾选：`Windows Build Support`、`2D Sprite`、`2D Tilemap Editor`
-- [ ] **Visual Studio 2022** 或 **VS Code**（Unity 编辑器会自动推荐）
-- [ ] **Git**（版本控制，强烈推荐）+ GitHub 账号（免费）
-- [ ] **Aseprite**（约 ¥14，像素画工具）或免费替代 **LibreSprite**
+- [x] **Visual Studio 2022** 或 **VS Code**（Unity 编辑器会自动推荐）
+- [x] **Git**（版本控制，强烈推荐）+ GitHub 账号（免费）
+- [x] **Aseprite**（约 ¥14，像素画工具）或免费替代 **LibreSprite**
 
 ### 新建项目
 1. 打开 Unity Hub → 新建项目
@@ -226,10 +226,10 @@ public class PlayerController : MonoBehaviour
 6. 点击运行，测试左右移动和跳跃
 
 **本周自检清单**
-- [ ] 能在 Tilemap 上绘制地形
-- [ ] 玩家可以左右移动
-- [ ] 玩家可以跳跃，落到地面停止
-- [ ] 地形有碰撞，玩家不会穿过
+- [x] 能在 Tilemap 上绘制地形
+- [x] 玩家可以左右移动
+- [x] 玩家可以跳跃，落到地面停止
+- [x] 地形有碰撞，玩家不会穿过
 
 ---
 
