@@ -84,6 +84,22 @@ public class PlayerInventory : MonoBehaviour
                 count += slot.amount;
         return count;
     }
+
+    public void ClearAll()
+    {
+        foreach (var slot in slots)
+        {
+            slot.itemData = null;
+            slot.amount = 0;
+        }
+    }
+
+    public void LoadSlot(int index, ItemData item, int amount)
+    {
+        if (index < 0 || index >= slots.Count) return;
+        slots[index].itemData = item;
+        slots[index].amount = amount;
+    }
 }
 
 [System.Serializable]

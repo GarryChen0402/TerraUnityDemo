@@ -113,4 +113,14 @@ public class PlayerStats : MonoBehaviour
         currentMP = Mathf.Min(currentMP + amount, maxMP);
         OnMPChanged?.Invoke(currentMP);
     }
+
+    public void LoadState(int curHP, int curMP, int mHP, int mMP, int atk, int def)
+    {
+        currentHP = curHP;
+        currentMP = curMP;
+        maxHP = mHP;
+        maxMP = mMP;
+        baseAttack = atk;
+        defense = def;
+    }
 }

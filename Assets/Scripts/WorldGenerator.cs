@@ -9,12 +9,23 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private int surfaceBaseHeight = 100;
     [SerializeField] private int surfaceVariation = 20;
     [SerializeField] private int worldSeed;
+    public int WorldSeed
+    {
+        get => worldSeed;
+        set => worldSeed = value;
+    }
+
+    private bool seedInitialized;
 
     private void Awake() => Instance = this;
 
     private void Start()
     {
-        worldSeed = Random.Range(0, 999999);
+        if (!seedInitialized)
+        {
+            worldSeed = Random.Range(0, 999999);
+            seedInitialized = true;
+        }
     }
 
     public static void FillChunk(ChunkData chunk)

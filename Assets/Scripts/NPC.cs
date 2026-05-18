@@ -123,4 +123,19 @@ public class NPC : MonoBehaviour
     }
 
     public bool IsPlayerInRange() => playerInRange;
+
+    // Save/Load accessors
+    public float WanderDirection => wanderDirection;
+    public float WanderTimer => wanderTimer;
+    public bool HasShownNightMessage => hasShownNightMessage;
+    public bool FlipX => spriteRenderer != null && spriteRenderer.flipX;
+
+    public void LoadState(float posX, float posY, float wDir, float wTimer, bool nightMsg, bool flipX)
+    {
+        transform.position = new Vector3(posX, posY, 0);
+        wanderDirection = wDir;
+        wanderTimer = wTimer;
+        hasShownNightMessage = nightMsg;
+        if (spriteRenderer != null) spriteRenderer.flipX = flipX;
+    }
 }

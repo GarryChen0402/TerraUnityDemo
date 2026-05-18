@@ -39,6 +39,7 @@ public static class RuntimeWeek10Setup
             EnsureTilemapFurniture();
             EnsureRoomDetectorExists();
             EnsureShopUIExists();
+            EnsureSaveManagerExists();
             LinkRoomDetectorReferences();
             Destroy(gameObject);
         }
@@ -116,6 +117,13 @@ public static class RuntimeWeek10Setup
             if (Object.FindObjectOfType<ShopUI>() != null) return;
             var go = new GameObject("ShopUI");
             go.AddComponent<ShopUI>();
+        }
+
+        private void EnsureSaveManagerExists()
+        {
+            if (Object.FindObjectOfType<SaveManager>() != null) return;
+            var go = new GameObject("SaveManager");
+            go.AddComponent<SaveManager>();
         }
 
         private void LinkRoomDetectorReferences()

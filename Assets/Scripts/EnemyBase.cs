@@ -31,12 +31,18 @@ public abstract class EnemyBase : MonoBehaviour
     protected Transform playerTransform;
     protected Rigidbody2D rb;
     protected SpriteRenderer spriteRenderer;
+    private Vector3 initialPosition;
+    public string DeathKey => $"{GetType().Name}|{initialPosition.x:F1}|{initialPosition.y:F1}";
+    public string EnemyTypeName => GetType().Name;
+    public float InitialPosX => initialPosition.x;
+    public float InitialPosY => initialPosition.y;
 
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentHP = maxHP;
+        initialPosition = transform.position;
     }
 
     protected virtual void Start()
@@ -117,6 +123,7 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Die()
     {
         ChangeState(EnemyState.Dead);
+        SaveManager.Instance?.RegisterDeadEnemy(this);
         DropItems();
         PlayerCurrency.Instance?.EarnFromEnemy(1);
         Destroy(gameObject, 0.5f);

@@ -22,6 +22,7 @@ public class ChunkManager : MonoBehaviour
     public Tilemap GroundTilemap => groundTilemap;
 
     private Dictionary<Vector2Int, ChunkData> chunks = new Dictionary<Vector2Int, ChunkData>();
+    public Dictionary<Vector2Int, ChunkData> GetAllChunks() => chunks;
     private Transform playerTransform;
     private Vector2Int lastCenterChunk;
 
@@ -55,7 +56,7 @@ public class ChunkManager : MonoBehaviour
         );
     }
 
-    private void UpdateActiveChunks(Vector2Int center)
+    public void UpdateActiveChunks(Vector2Int center)
     {
         HashSet<Vector2Int> neededChunks = new HashSet<Vector2Int>();
         for (int cx = -activeChunkRadius; cx <= activeChunkRadius; cx++)
@@ -120,8 +121,44 @@ public class ChunkManager : MonoBehaviour
             int localX = worldCell.x - chunkCoord.x * chunkSize;
             int localY = worldCell.y - chunkCoord.y * chunkSize;
             if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize)
+            {
                 chunk.tileIDs[localX, localY] = -1;
+                chunk.hasBeenModified = true;
+            }
         }
+    }
+
+    public void ClearAllChunks()
+    {
+        foreach (var kvp in chunks)
+        {
+            if (kvp.Value.isActive)
+                DeactivateChunk(kvp.Key);
+        }
+        chunks.Clear();
+        lastCenterChunk = new Vector2Int(int.MinValue, int.MinValue);
+    }
+
+    public void ApplySavedChunk(Vector2Int coord, int[] flatTileIDs)
+    {
+        if (!chunks.TryGetValue(coord, out var chunk))
+        {
+            chunk = new ChunkData(coord);
+            chunks[coord] = chunk;
+            WorldGenerator.FillChunk(chunk);
+            chunk.isGenerated = true;
+        }
+        chunk.UnflattenTileIDs(flatTileIDs);
+        chunk.hasBeenModified = true;
+
+        if (chunk.isActive)
+            ApplyChunkToTilemap(coord);
+    }
+
+    public void ForceRegenerateAround(Vector2Int chunkCoord)
+    {
+        lastCenterChunk = chunkCoord;
+        UpdateActiveChunks(chunkCoord);
     }
 
     private void ApplyChunkToTilemap(Vector2Int coord)
@@ -132,11 +169,15 @@ public class ChunkManager : MonoBehaviour
             for (int y = 0; y < chunkSize; y++)
             {
                 int tileID = chunk.tileIDs[x, y];
-                if (tileID < 0) continue;
-
                 Vector3Int worldCell = new Vector3Int(
                     coord.x * chunkSize + x,
                     coord.y * chunkSize + y, 0);
+
+                if (tileID < 0)
+                {
+                    groundTilemap.SetTile(worldCell, null);
+                    continue;
+                }
 
                 if (tileID < tileAssets.Length)
                     groundTilemap.SetTile(worldCell, tileAssets[tileID]);

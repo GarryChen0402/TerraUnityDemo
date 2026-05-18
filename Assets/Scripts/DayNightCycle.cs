@@ -11,7 +11,7 @@ public class DayNightCycle : MonoBehaviour
     [SerializeField] private Image nightOverlay;
     [SerializeField] private float nightOverlayMaxAlpha = 0.55f;
 
-    public float TimeOfDay { get; private set; } = 0.25f;
+    public float TimeOfDay { get; set; } = 0.25f;
     public bool IsNight => TimeOfDay < 0.2f || TimeOfDay > 0.8f;
     public bool IsDay => !IsNight;
 

@@ -63,4 +63,35 @@ public class PlayerEquipment : MonoBehaviour
         if (tool != null) return tool.miningLevel;
         return 0;
     }
+
+    public void LoadFromItemIDs(int[] ids, System.Collections.Generic.Dictionary<int, ItemData> itemDB)
+    {
+        ItemData Resolve(int idx) => idx >= 0 && idx < ids.Length && ids[idx] >= 0 && itemDB.TryGetValue(ids[idx], out var item) ? item : null;
+
+        helmet = Resolve(0);
+        chestplate = Resolve(1);
+        leggings = Resolve(2);
+        boots = Resolve(3);
+        offhand = Resolve(4);
+        accessory1 = Resolve(5);
+        accessory2 = Resolve(6);
+        weapon = Resolve(7);
+        tool = Resolve(8);
+    }
+
+    public int[] GetEquipmentItemIDs()
+    {
+        return new int[]
+        {
+            helmet != null ? helmet.itemID : -1,
+            chestplate != null ? chestplate.itemID : -1,
+            leggings != null ? leggings.itemID : -1,
+            boots != null ? boots.itemID : -1,
+            offhand != null ? offhand.itemID : -1,
+            accessory1 != null ? accessory1.itemID : -1,
+            accessory2 != null ? accessory2.itemID : -1,
+            weapon != null ? weapon.itemID : -1,
+            tool != null ? tool.itemID : -1,
+        };
+    }
 }

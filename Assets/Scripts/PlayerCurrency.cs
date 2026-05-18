@@ -41,4 +41,6 @@ public class PlayerCurrency : MonoBehaviour
     public void Earn(long copperAmount) => totalCopper += copperAmount;
 
     public void EarnFromEnemy(int monsterLevel) => Earn(Random.Range(5, 15) * (monsterLevel + 1));
+
+    public void SetTotalCopper(long amount) => totalCopper = amount;
 }
