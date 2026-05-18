@@ -8170,21 +8170,6 @@ MonoBehaviour:
   allRecipes:
   - {fileID: 11400000, guid: b2b0e732cebe4e0c80e798d498d32500, type: 2}
   - {fileID: 11400000, guid: aa434ab316f14e5aa53bc7afc507ad66, type: 2}
-  recipeButtonPrefab: {fileID: 0}
---- !u!114 &2140200000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1170769066}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e78061e7737943e6980723ecedaae296, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  toggleKey: 282
-  defaultAmount: 10
 --- !u!1 &1174867968
 GameObject:
   m_ObjectHideFlags: 0
@@ -20054,7 +20039,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -400, y: 0}
   m_SizeDelta: {x: 320, y: 420}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2073300225
@@ -20067,8 +20052,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.15, g: 0.15, b: 0.15, a: 0.9}
   m_RaycastTarget: 1
@@ -20538,6 +20523,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2140187317}
   m_CullTransparentMesh: 1
+--- !u!114 &2140200000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1170769066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e78061e7737943e6980723ecedaae296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toggleKey: 282
+  defaultAmount: 10
 --- !u!1001 &7460860043926378414
 PrefabInstance:
   m_ObjectHideFlags: 0

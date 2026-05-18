@@ -11,11 +11,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88d95965c311b9942b880e90a3539066, type: 3}
   m_Name: WoodPickaxeItem
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   itemID: 10
-  itemName: "Wood Pickaxe"
-  icon: {fileID: -33355429, guid: 9cae501fa8069de4c978c9c3a0bea9c6, type: 3}
-  description: "A basic tool for mining"
+  itemName: Wood Pickaxe
+  icon: {fileID: -1740057906, guid: 9c0a82bd4355c0d4882a32e66542257f, type: 3}
+  description: A basic tool for mining
   maxStack: 1
   itemType: 1
   rarity: 0
