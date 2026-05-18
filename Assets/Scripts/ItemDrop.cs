@@ -17,13 +17,19 @@ public class ItemDrop : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (itemData != null && itemData.icon != null)
+        {
             spriteRenderer.sprite = itemData.icon;
+        }
     }
 
     private void Start()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         Invoke(nameof(EnablePickup), pickupDelay);
+        if (itemData != null && itemData.icon != null)
+        {
+            spriteRenderer.sprite = itemData.icon;
+        }
     }
 
     private void EnablePickup() => canPickup = true;

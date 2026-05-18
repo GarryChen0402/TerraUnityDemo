@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d95965c311b9942b880e90a3539066, type: 3}
+  m_Name: DirtItem
+  m_EditorClassIdentifier: 
+  itemID: 1
+  itemName: "\u6CE5\u571F"
+  icon: {fileID: -33355429, guid: 9cae501fa8069de4c978c9c3a0bea9c6, type: 3}
+  description: 
+  maxStack: 999
+  itemType: 0
+  miningPower: 0
+  miningLevel: 0
+  damage: 0
