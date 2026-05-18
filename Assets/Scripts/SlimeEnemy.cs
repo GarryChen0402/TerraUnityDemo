@@ -64,7 +64,7 @@ public class SlimeEnemy : EnemyBase
 
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log($"Slime dealt {damage} damage to player");
+            PlayerStats.Instance?.TakeDamage(damage);
         }
     }
 
