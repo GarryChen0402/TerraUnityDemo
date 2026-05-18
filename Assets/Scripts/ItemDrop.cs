@@ -16,20 +16,15 @@ public class ItemDrop : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (itemData != null && itemData.icon != null)
-        {
-            spriteRenderer.sprite = itemData.icon;
-        }
     }
 
     private void Start()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         Invoke(nameof(EnablePickup), pickupDelay);
+
         if (itemData != null && itemData.icon != null)
-        {
             spriteRenderer.sprite = itemData.icon;
-        }
     }
 
     private void EnablePickup() => canPickup = true;
@@ -57,6 +52,9 @@ public class ItemDrop : MonoBehaviour
 
     private void PickupItem()
     {
+        if (itemData.coinValue > 0 && PlayerCurrency.Instance != null)
+            PlayerCurrency.Instance.Earn(itemData.coinValue * amount);
+
         Debug.Log($"Picked up {itemData.itemName} x{amount}");
         Destroy(gameObject);
     }

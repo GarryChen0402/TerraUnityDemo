@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
 
         // 修改 Rigidbody2D 的速度：保持 Y 轴速度不变，只改 X
-        rb.linearVelocity = new Vector2(horizontal * moveSpeed, rb.linearVelocity.y);
+        rb.velocity = new Vector2(horizontal * moveSpeed, rb.velocity.y);
     }
 
     private void HandleJump()
@@ -194,7 +194,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             // 设置向上速度实现跳跃
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             isGrounded = false;
         }
     }
@@ -756,15 +756,15 @@ public class PlayerController : MonoBehaviour
         // 当两个计时器都有效时执行跳跃
         if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpBufferCounter = 0f;  // 消耗跳跃缓冲
             coyoteTimeCounter = 0f; // 消耗 Coyote Time（防止二段跳）
         }
 
         // 松开跳跃键时减小上升速度（可变高度跳跃）
-        if (Input.GetKeyUp(KeyCode.Space) && rb.linearVelocity.y > 0f)
+        if (Input.GetKeyUp(KeyCode.Space) && rb.velocity.y > 0f)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
     }
 
@@ -773,7 +773,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
-        rb.linearVelocity = new Vector2(horizontal * moveSpeed, rb.linearVelocity.y);
+        rb.velocity = new Vector2(horizontal * moveSpeed, rb.velocity.y);
 
         // 角色翻转：根据移动方向翻转精灵
         if (horizontal > 0)
@@ -1416,7 +1416,7 @@ public class SlimeEnemy : EnemyBase
 
         if (jumpTimer <= 0 && isGrounded)
         {
-            rb.linearVelocity = new Vector2(patrolDirection * moveSpeed, jumpForce);
+            rb.velocity = new Vector2(patrolDirection * moveSpeed, jumpForce);
             jumpTimer = jumpInterval;
             isGrounded = false;
         }
@@ -1430,7 +1430,7 @@ public class SlimeEnemy : EnemyBase
         if (jumpTimer <= 0 && isGrounded)
         {
             float dirX = (playerTransform.position.x - transform.position.x) > 0 ? 1f : -1f;
-            rb.linearVelocity = new Vector2(dirX * moveSpeed * 1.3f, jumpForce);
+            rb.velocity = new Vector2(dirX * moveSpeed * 1.3f, jumpForce);
             jumpTimer = jumpInterval * 0.8f;  // 追击时跳得更频繁
             isGrounded = false;
             spriteRenderer.flipX = dirX < 0;
@@ -2143,13 +2143,13 @@ public class EyeKingBoss : EnemyBase
         {
             // 第一阶段：悬浮追击，偶尔俯冲
             Vector2 direction = (playerTransform.position - transform.position).normalized;
-            rb.linearVelocity = direction * hoverSpeed;
+            rb.velocity = direction * hoverSpeed;
         }
         else
         {
             // 第二阶段：更快的悬浮 + 频繁俯冲
             Vector2 direction = (playerTransform.position - transform.position).normalized;
-            rb.linearVelocity = direction * hoverSpeed * 1.5f;
+            rb.velocity = direction * hoverSpeed * 1.5f;
         }
     }
 
