@@ -19,6 +19,7 @@ public class ChunkManager : MonoBehaviour
 
     [Header("Target Tilemap")]
     [SerializeField] private Tilemap groundTilemap;
+    public Tilemap GroundTilemap => groundTilemap;
 
     private Dictionary<Vector2Int, ChunkData> chunks = new Dictionary<Vector2Int, ChunkData>();
     private Transform playerTransform;
