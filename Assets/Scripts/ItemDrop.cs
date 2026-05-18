@@ -55,7 +55,23 @@ public class ItemDrop : MonoBehaviour
         if (itemData.coinValue > 0 && PlayerCurrency.Instance != null)
             PlayerCurrency.Instance.Earn(itemData.coinValue * amount);
 
-        Debug.Log($"Picked up {itemData.itemName} x{amount}");
-        Destroy(gameObject);
+        if (PlayerInventory.Instance != null)
+        {
+            int added = PlayerInventory.Instance.AddItem(itemData, amount);
+            if (added >= amount)
+            {
+                Debug.Log($"Picked up {itemData.itemName} x{amount}");
+                Destroy(gameObject);
+                return;
+            }
+
+            amount -= added;
+            Debug.Log($"Picked up {itemData.itemName} x{added}, inventory full — {amount} left on ground");
+        }
+        else
+        {
+            Debug.Log($"Picked up {itemData.itemName} x{amount}");
+            Destroy(gameObject);
+        }
     }
 }
