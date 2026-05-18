@@ -51,7 +51,7 @@ public class PlayerInventory : MonoBehaviour
 
         int addedAmount = amount - remaining;
         if (addedAmount > 0)
-            Debug.Log($"背包获得 {item.itemName} x{addedAmount}");
+            Debug.Log($"Picked up {item.itemName} x{addedAmount}");
 
         return addedAmount;
     }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Grass
   m_EditorClassIdentifier: 
   tile: {fileID: 11400000, guid: aeb96bedd3f58f243a7f52ff25036350, type: 2}
-  tileName: "草地"
+  tileName: "Grass"
   hardness: 1
   requiredMiningLevel: 0
   dropItem: {fileID: 11400000, guid: 4b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e, type: 2}

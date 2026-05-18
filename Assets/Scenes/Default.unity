@@ -7874,6 +7874,7 @@ GameObject:
   - component: {fileID: 1170769077}
   - component: {fileID: 1170769076}
   - component: {fileID: 1170769078}
+  - component: {fileID: 1170769079}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -8049,8 +8050,6 @@ MonoBehaviour:
   mineRange: 3
   itemDropPrefab: {fileID: 1827364950182736495, guid: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6, type: 3}
   miningProgressBar: {fileID: 1174867970}
-  currentMiningPower: 1
-  currentMiningLevel: 0
 --- !u!114 &1170769073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8084,6 +8083,7 @@ MonoBehaviour:
   accessory1: {fileID: 0}
   accessory2: {fileID: 0}
   weapon: {fileID: 0}
+  tool: {fileID: 0}
 --- !u!114 &1170769075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8151,6 +8151,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da1ee2fd756c53b44b257d72807aa009, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1170769079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1170769066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818ef7986b2c458cae6924bb8e9d51c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  craftingPanel: {fileID: 2073300223}
+  recipeContainer: {fileID: 0}
+  toggleKey: 99
+  allRecipes:
+  - {fileID: 11400000, guid: b2b0e732cebe4e0c80e798d498d32500, type: 2}
+  - {fileID: 11400000, guid: aa434ab316f14e5aa53bc7afc507ad66, type: 2}
+  recipeButtonPrefab: {fileID: 0}
 --- !u!1 &1174867968
 GameObject:
   m_ObjectHideFlags: 0
@@ -17464,6 +17483,7 @@ RectTransform:
   - {fileID: 1174867969}
   - {fileID: 130452198}
   - {fileID: 448776206}
+  - {fileID: 2073300224}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -19984,6 +20004,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2058661363}
+  m_CullTransparentMesh: 1
+--- !u!1 &2073300223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2073300224}
+  - component: {fileID: 2073300226}
+  - component: {fileID: 2073300225}
+  m_Layer: 5
+  m_Name: CraftingPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2073300224
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073300223}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1600419748}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 320, y: 420}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2073300225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073300223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.15, g: 0.15, b: 0.15, a: 0.9}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2073300226
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073300223}
   m_CullTransparentMesh: 1
 --- !u!1 &2088119055
 GameObject:

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Dirt
   m_EditorClassIdentifier: 
   tile: {fileID: 11400000, guid: c8cb777a12868004fa7eaca29b5aae43, type: 2}
-  tileName: "泥土"
+  tileName: "Dirt"
   hardness: 1
   requiredMiningLevel: 0
   dropItem: {fileID: 11400000, guid: 3a7f8b2d1c4e5f6a7b8c9d0e1f2a3b4c, type: 2}

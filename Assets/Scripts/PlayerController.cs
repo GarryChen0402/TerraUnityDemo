@@ -33,9 +33,9 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         if (groundCheck == null)
-            Debug.LogError("GroundCheck Transform 未赋值！请在 Inspector 中将 GroundCheck 子对象拖入。");
+            Debug.LogError("GroundCheck Transform not assigned! Drag the GroundCheck child into the Inspector.");
         if (groundLayer.value == 0)
-            Debug.LogError("Ground Layer 未设置！请在 Inspector 中勾选 Ground 层。");
+            Debug.LogError("Ground Layer not set! Set the Ground layer in the Inspector.");
     }
 
     private void Update()
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             jumpBufferCounter = jumpBufferTime;
-            Debug.Log($"空格按下 | IsGrounded={IsGrounded}, coyoteTimer={coyoteTimeCounter:F2}, jumpBuffer={jumpBufferCounter:F2}");
+            Debug.Log($"Space pressed | IsGrounded={IsGrounded}, coyoteTimer={coyoteTimeCounter:F2}, jumpBuffer={jumpBufferCounter:F2}");
         }
         else
         {
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpBufferCounter = 0f;
             coyoteTimeCounter = 0f;
-            Debug.Log("跳跃执行！");
+            Debug.Log("Jump executed!");
         }
 
         if (Input.GetKeyUp(KeyCode.Space) && rb.velocity.y > 0f)

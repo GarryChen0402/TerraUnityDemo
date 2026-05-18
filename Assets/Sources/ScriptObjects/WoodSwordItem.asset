@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88d95965c311b9942b880e90a3539066, type: 3}
-  m_Name: FiberItem
-  m_EditorClassIdentifier: 
-  itemID: 2
-  itemName: "Plant Fiber"
-  icon: {fileID: 867153626, guid: 9cae501fa8069de4c978c9c3a0bea9c6, type: 3}
-  description: 
-  maxStack: 999
-  itemType: 0
+  m_Name: WoodSwordItem
+  m_EditorClassIdentifier:
+  itemID: 11
+  itemName: "Wood Sword"
+  icon: {fileID: -33355429, guid: 9cae501fa8069de4c978c9c3a0bea9c6, type: 3}
+  description: "A simple wooden weapon"
+  maxStack: 1
+  itemType: 2
   rarity: 0
-  coinValue: 1
+  coinValue: 60
   miningPower: 0
   miningLevel: 0
-  damage: 0
+  damage: 8
   attackSpeed: 1

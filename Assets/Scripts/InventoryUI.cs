@@ -4,11 +4,19 @@ using TMPro;
 
 public class InventoryUI : MonoBehaviour
 {
+    public static InventoryUI Instance { get; private set; }
+
     [SerializeField] private GameObject inventoryPanel;
     [SerializeField] private Transform slotGrid;
     [SerializeField] private KeyCode toggleKey = KeyCode.B;
 
     private bool isOpen;
+
+    private void Awake()
+    {
+        if (Instance != null) { Destroy(gameObject); return; }
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -98,5 +106,10 @@ public class InventoryUI : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ForceRefresh()
+    {
+        RefreshSlots();
     }
 }

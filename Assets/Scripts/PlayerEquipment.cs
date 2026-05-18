@@ -12,6 +12,7 @@ public class PlayerEquipment : MonoBehaviour
     public ItemData accessory1;
     public ItemData accessory2;
     public ItemData weapon;
+    public ItemData tool;
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class PlayerEquipment : MonoBehaviour
         switch (item.itemType)
         {
             case ItemType.Weapon: weapon = item; break;
+            case ItemType.Tool: tool = item; break;
             case ItemType.Armor: chestplate = item; break;
             default: return false;
         }
@@ -48,5 +50,17 @@ public class PlayerEquipment : MonoBehaviour
         if (leggings != null && leggings.itemType == ItemType.Armor) defense += leggings.damage;
         if (boots != null && boots.itemType == ItemType.Armor) defense += boots.damage;
         return defense;
+    }
+
+    public int GetMiningPower()
+    {
+        if (tool != null) return tool.miningPower;
+        return 1; // bare hands
+    }
+
+    public int GetMiningLevel()
+    {
+        if (tool != null) return tool.miningLevel;
+        return 0;
     }
 }

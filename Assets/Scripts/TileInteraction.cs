@@ -9,17 +9,15 @@ public class TileInteraction : MonoBehaviour
     [SerializeField] private GameObject itemDropPrefab;
     [SerializeField] private Slider miningProgressBar;
 
-    [Header("Player Tool Properties")]
-    public int currentMiningPower = 1;
-    public int currentMiningLevel = 0;
-
     private Camera mainCamera;
     private Vector3Int currentTargetCell;
     private float miningProgress;
+    private PlayerEquipment equipment;
 
     private void Awake()
     {
         mainCamera = Camera.main;
+        equipment = GetComponent<PlayerEquipment>();
         if (miningProgressBar != null)
             miningProgressBar.gameObject.SetActive(false);
     }
@@ -47,7 +45,10 @@ public class TileInteraction : MonoBehaviour
         TileData tileData = TileDataManager.Instance.GetTileData(tile);
         if (tileData == null) { ResetMining(); return; }
 
-        if (currentMiningLevel < tileData.requiredMiningLevel)
+        int miningLevel = equipment != null ? equipment.GetMiningLevel() : 0;
+        int miningPower = equipment != null ? equipment.GetMiningPower() : 1;
+
+        if (miningLevel < tileData.requiredMiningLevel)
         {
             Debug.Log($"Need mining level {tileData.requiredMiningLevel} or higher!");
             ResetMining();
@@ -66,7 +67,7 @@ public class TileInteraction : MonoBehaviour
             miningProgressBar.transform.position = Input.mousePosition + new Vector3(0, 30, 0);
         }
 
-        float mineSpeed = currentMiningPower / tileData.hardness;
+        float mineSpeed = miningPower / tileData.hardness;
         miningProgress += mineSpeed * Time.deltaTime;
 
         if (miningProgressBar != null)

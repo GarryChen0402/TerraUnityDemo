@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DirtItem
   m_EditorClassIdentifier: 
   itemID: 1
-  itemName: "\u6CE5\u571F"
+  itemName: "Dirt"
   icon: {fileID: -33355429, guid: 9cae501fa8069de4c978c9c3a0bea9c6, type: 3}
   description: 
   maxStack: 999
