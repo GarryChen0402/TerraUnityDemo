@@ -1,7 +1,7 @@
 # Terra Unity — 开发进度文档
 
-> **更新日期**: 2026-05-18  
-> **当前状态**: 第 1-2 阶段已基本完成（Week 1-10），第 3 阶段起尚未开始（Week 11-16）  
+> **更新日期**: 2026-05-19  
+> **当前状态**: 第 1-2 阶段已基本完成（Week 1-10），第 3 阶段部分完成（Week 13 存档系统已实现）  
 > **参考文档**: Terra_Unity_DevPlan.md、Terra_Unity_GDD.md
 
 ---
@@ -14,10 +14,10 @@
 | 第 0 阶段 | 第 1-2 天 | ✅ 完成 | 100% |
 | 第 1 阶段：核心原型 | Week 1-4 | ✅ 完成 | 100% |
 | 第 2 阶段：内容系统 | Week 5-10 | ✅ 完成 | 100% |
-| 第 3 阶段：进阶内容 | Week 11-14 | ❌ 未开始 | 0% |
+| 第 3 阶段：进阶内容 | Week 11-14 | 🔄 进行中 | ~25% |
 | 第 4 阶段：打磨 | Week 15-16 | ❌ 未开始 | 0% |
 
-**整体完成度：约 62%（10/16 周）**
+**整体完成度：约 69%（11/16 周）**
 
 ---
 
@@ -133,6 +133,12 @@
 
 **备注**: 敌人 FSM 实现完整。SlimeEnemy 的 `OnAttack()` 为空（接触伤害代替独立攻击动作）。受击效果包含击退（knockback）和白色闪烁（HitFlash 协程），比 DevPlan 描述更丰富。
 
+**补充 — EnemySpawner**（后续追加，commit `749fea1`）：
+- `EnemySpawner.cs` 挂载在场景中，定期在摄像机视野外、地表上方生成史莱姆
+- 参数：`spawnInterval=5s`，`maxEnemies=10`，`spawnDistMin=3f / Max=20f`
+- 生成位置计算：沿摄像机左右边缘外随机距离 → `FindSurfaceY()` 向下扫描地表 → 在地表上方 1.5 格生成
+- 最多尝试 15 次找到有效位置，避免生成在墙体内部
+
 ---
 
 ### Week 8：战斗系统 + HP/MP + 状态效果 ✅ 完成
@@ -222,14 +228,54 @@
 
 ---
 
-### Week 13：存档系统 ❌ 未开始
+### Week 13：存档系统 ✅ 完成
 
-| 计划任务 | 状态 |
-|----------|------|
-| SaveManager | ❌ |
-| JSON 序列化 | ❌ |
-| 自动存档（5 分钟） | ❌ |
-| 3 个存档槽 | ❌ |
+| 计划任务 | 状态 | 实际实现 |
+|----------|------|----------|
+| SaveManager | ✅ | `SaveManager.cs`，单例，DontDestroyOnLoad |
+| JSON 序列化 | ✅ | `JsonUtility.ToJson/FromJson`，prettyPrint |
+| 自动存档（5 分钟） | ✅ | `autoSaveTimer`，每 300 秒自动存到 slot 0 |
+| 手动存档（F5） | ✅ | 按 F5 存到 slot 1 |
+| 手动读档（F9） | ✅ | 按 F9 自动选择存档（优先级：slot 1→2→3→0） |
+| 3 个存档槽 | ✅ | slot 0（自动）/ slot 1（F5）/ slot 2/3（预留） |
+| 世界数据存档 | ✅ | 世界种子 + 时间 + 已修改 Chunk（`modifiedChunks`） |
+| 玩家数据存档 | ✅ | 位置/HP/MP/属性/货币/背包/装备 |
+| NPC 状态存档 | ✅ | 位置/巡逻方向/计时器/朝向/夜间消息状态 |
+| 已击杀敌人追踪 | ✅ | `DeadEnemyData`（类型+位置），读档时销毁对应敌人 |
+| Chunk 修改持久化 | ✅ | `ChunkData.FlattenTileIDs()/UnflattenTileIDs()`，`hasBeenModified` 标记 |
+
+**实现架构**：
+```
+SaveData.cs（数据结构）          SaveManager.cs（管理器）
+├── WorldData                   ├── Save(slot) — 收集所有单例数据，序列化写入文件
+│   ├── worldSeed               ├── Load(slot) — 读取文件，反序列化，逐系统恢复
+│   ├── timeOfDay               ├── Auto-save — Update 中每 300s 调用 Save(0)
+│   └── modifiedChunks[]        └── 输入 — F5 存档 / F9 读档
+├── PlayerData
+│   ├── 位置/HP/MP/属性
+│   ├── totalCopper
+│   ├── inventory[]
+│   └── equipment[] (9槽, itemID)
+├── NpcData[]
+│   └── 位置/巡逻/朝向/状态
+└── DeadEnemyData[]
+    └── 类型+位置 Key
+```
+
+**各系统存档集成点**：
+| 系统 | 存盘方法 | 读盘方法 |
+|------|---------|---------|
+| PlayerStats | 直接读取 `currentHP/MP/maxHP/MP/attack/defense` | `LoadState(curHP, curMP, maxHP, maxMP, atk, def)` |
+| PlayerCurrency | 读取 `TotalCopper` (long) | `SetTotalCopper(amount)` |
+| PlayerInventory | 遍历 `slots` 输出非空格子 | `ClearAll()` → `LoadSlot(index, item, amount)` |
+| PlayerEquipment | `GetEquipmentItemIDs()`(int[9]) | `LoadFromItemIDs(ids, itemDB)` |
+| NPC | 暴露 `WanderDirection/Timer/HasShownNightMessage/FlipX` | `LoadState(posX, posY, wDir, wTimer, nightMsg, flipX)` |
+| EnemyBase | `DeathKey` = `"{TypeName}|{posX:F1}|{posY:F1}"` | 读档时销毁匹配 DeathKey 的敌人 |
+| ChunkManager | `GetAllChunks()` → 筛选 `hasBeenModified` → `FlattenTileIDs()` | `ClearAllChunks()` → `ForceRegenerateAround()` → `ApplySavedChunk()` |
+| DayNightCycle | 读取 `TimeOfDay` | 直接设置 `TimeOfDay` |
+| WorldGenerator | 读取 `WorldSeed` | 直接设置 `WorldSeed` |
+
+**备注**: 实现远超 DevPlan 基本要求。DevPlan 仅设计了玩家位置/HP/游戏时间的存档；实际实现覆盖了世界修改追踪、NPC 完整状态、已击杀敌人持久化、装备和背包的完整恢复、修改过的 Chunk 增量保存。存档路径位于 `Application.persistentDataPath/saves/save_slot_{slot}.json`。物品数据库通过 `Resources.LoadAll<ItemData>()` 在 SaveManager.Awake 时构建，用于读档时 itemID → ItemData 的映射。
 
 ---
 
@@ -284,12 +330,13 @@
 
 | 方面 | DevPlan/GDD 要求 | 实际状态 |
 |------|-----------------|----------|
-| 敌人类 | 多种敌人（骷髅/蝙蝠/飞眼等） | 仅 SlimeEnemy 一种 |
+| 敌人类 | 多种敌人（骷髅/蝙蝠/飞眼等） | 仅 SlimeEnemy 一种，但有 EnemySpawner 自动生成 |
 | 合成台 | 5 种（工作台/熔炉/铁砧/法术台/暗铁台） | 4 种枚举值（Hand/Workbench/Furnace/Anvil） |
 | NPC 类型 | 6 种（商人/护士/爆破师/法师/武器商/向导） | 仅 1 种（Merchant 商人） |
 | 物品数量 | 矿石链完整（木材→铜→铁→金→暗铁→虚空） | 基础物品（泥土/石块/草/纤维/木镐/木剑） |
 | 世界尺寸 | 4200×1200 | 参数上已设置，但 ChunkManager 可能未在实际场景中使用 |
 | 多生物群系 | 5 种群系 | 仅基础噪声地形（草地/泥土/石头/洞穴） |
+| 存档系统 | Week 13 待实现 | ✅ 已完整实现，覆盖世界/玩家/NPC/敌人/装备/Chunk |
 
 ---
 
@@ -333,9 +380,10 @@
 
 1. **Week 11**：实现多生物群系系统，基于 x 坐标分段切换地表 Tile 类型
 2. **Week 12**：实现第一个 Boss（眼球之王），继承 EnemyBase 扩展两阶段 AI
-3. **Week 13**：存档系统 — 使用 JsonUtility 序列化 PlayerInventory/PlayerStats/ChunkData
-4. 在此之前，建议先完善已有功能的测试和 Bug 修复，确保 Week 1-10 的内容稳定运行
+3. **Week 14**：小地图（Fog of War）+ 死亡界面 + HUD 完善
+4. 存档系统（Week 13）已完成，可在此基础上继续迭代（如存档槽 UI、存档预览）
+5. 在此之前，建议先完善已有功能的测试和 Bug 修复，确保 Week 1-10 的内容稳定运行
 
 ---
 
-*本文档基于代码审查生成，反映截至 2026-05-18 的实际开发状态。*
+*本文档基于代码审查生成，反映截至 2026-05-19 的实际开发状态。*
