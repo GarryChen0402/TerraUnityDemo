@@ -41,6 +41,7 @@ public static class RuntimeWeek10Setup
             EnsureShopUIExists();
             EnsureSaveManagerExists();
             EnsureEnemySpawnerExists();
+            EnsureMinimapExists();
             LinkRoomDetectorReferences();
             Destroy(gameObject);
         }
@@ -132,6 +133,13 @@ public static class RuntimeWeek10Setup
             if (Object.FindObjectOfType<EnemySpawner>() != null) return;
             var go = new GameObject("EnemySpawner");
             go.AddComponent<EnemySpawner>();
+        }
+
+        private void EnsureMinimapExists()
+        {
+            if (Object.FindObjectOfType<Minimap>() != null) return;
+            var go = new GameObject("Minimap");
+            go.AddComponent<Minimap>();
         }
 
         private void LinkRoomDetectorReferences()

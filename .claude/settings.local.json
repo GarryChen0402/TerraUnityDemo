@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(uuidgen)"
+      "Bash(uuidgen)",
+      "mcp__ide__getDiagnostics"
     ]
   }
 }
