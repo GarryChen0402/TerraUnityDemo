@@ -52,7 +52,7 @@ TerraUnity Demo — 一个 2D 类泰拉瑞亚沙盒游戏，使用 **Unity 2022.
 
 所有主要 UI 面板（`InventoryUI`、`CraftingUI`、`ShopUI`、`DebugItemPanel`）**完全通过代码构建**——不使用 Prefab。它们调用 `FindObjectOfType<Canvas>()` 并以编程方式实例化 GameObject，包括 RectTransform、Image、TextMeshProUGUI 文本、Button 以及 ScrollRect/GridLayoutGroup 布局。如果 Canvas 上已存在匹配的子对象，则复用它；否则从零创建。这意味着修改 UI 布局需要编辑 C# 代码而非 Unity 场景。
 
-快捷键：**B** = 背包，**C** = 合成，**E** = 与 NPC 交互，**F1** = 调试物品面板，**U** = 召唤 NPC。
+快捷键：**B** = 背包，**C** = 合成，**E** = 与 NPC 交互，**F1** = 调试物品面板，**F5** = 手动存档（槽位 1），**F9** = 读档（优先级 1→2→3→0），**M** = 全屏地图，**U** = 召唤 NPC。
 
 ### 敌人系统
 
@@ -66,6 +66,47 @@ TerraUnity Demo — 一个 2D 类泰拉瑞亚沙盒游戏，使用 **Unity 2022.
 
 `ShopData`（ScriptableObject）— 包含 `ShopItemEntry` 列表（物品 + 库存数量，-1 = 无限）和出售价格倍率。
 
+### 存档系统
+
+`SaveManager`（单例）使用 `JsonUtility` 序列化 `SaveData` 到 `Application.persistentDataPath/saves/save_slot_{n}.json`。
+
+- **自动存档**：每 300 秒自动保存到槽位 0。
+- **手动存档**：按 **F5** 保存到槽位 1。
+- **读档**：按 **F9** 按优先级 1→2→3→0 查找存档并加载。
+- **物品数据库**：`BuildItemDatabase()` 从 `Resources.LoadAll<ItemData>()` 构建 `Dictionary<int, ItemData>`，用于读档时通过 itemID 恢复物品引用。
+- **死亡敌人追踪**：`deadEnemyKeys` 集合存储 `EnemyBase.DeathKey`（格式：`"{TypeName}|{spawnX:F1}|{spawnY:F1}"`），读档时销毁匹配的敌人对象。
+- **存档内容**：世界种子、昼夜时间、已修改区块的 tile 数据、玩家位置/属性/货币/背包/装备、NPC 状态（位置、漫游方向、夜间消息标记）、死亡敌人列表。
+- **加载流程**：先设置玩家位置 → 清空并重新生成区块 → 应用已修改区块的 tile 覆盖 → 恢复玩家属性/货币/背包/装备 → 恢复 NPC 状态 → 销毁已死亡敌人。
+
+### 小地图系统
+
+`Minimap`（单例）使用 CPU 端纹理渲染实现**战争迷雾**和**小地图/全屏地图**。按 **M** 切换全屏地图（关闭时显示角落地图）。
+
+- **坐标系**：1 纹理像素 = 10 世界单位，迷雾纹理 420×120（覆盖 4200×1200 世界）。
+- **颜色映射**：`tileID` -1 = 空气（深色），0 = 草地（绿），1 = 泥土（棕），2 = 石头（灰）；未探索区域显示为深蓝色。
+- **小地图**：150×150 的 RawImage，固定在右上角，以玩家为中心显示 `minimapViewRadius`（默认 100）范围内的区域。
+- **全屏地图**：600×380 面板，悬浮在屏幕中央，显示整个探索过的世界。包含图例和"显示敌人"切换按钮。敌人可以在全屏地图中隐藏以仅查看地形。
+- **实体标记**：玩家（青色十字）、NPC（绿色点）、敌人（红色点）——每帧从 `FindObjectsOfType` 动态绘制。
+- **UI 构建**：完全通过代码构建（Canvas 子对象），与其他 UI 面板风格一致。
+
+### 敌人刷新
+
+`EnemySpawner` 在摄像机视野外的地表上生成史莱姆。通过从高空向下扫描 `Tilemap_Ground` 查找地表 Y 坐标，确保生成位置在 Tile 上方且未被阻挡。受 `maxEnemies`（默认 10）和 `spawnInterval`（默认 5 秒）限制。
+
+### 掉落物
+
+`ItemDrop` 在世界中以 SpriteRenderer 形式存在，显示物品图标。0.5 秒延迟后启用拾取，玩家靠近时磁吸移动（`pickupRange * 3` 范围内），接触时自动加入背包。同时处理硬币价值和物品入包，支持部分拾取（背包满时剩余数量留在地上）。
+
+### 状态效果
+
+`StatusEffect` 是一个可序列化类（非 MonoBehaviour），子类通过重写 `OnTick()` 实现具体效果：
+- `PoisonEffect`：10 秒，每秒造成 2 点伤害
+- `BurnEffect`：5 秒，每 0.5 秒造成 5 点伤害
+- `SlowEffect`：3 秒，仅改变移动速度
+- `RegenEffect`：8 秒，每秒回复 2 点 HP
+
+`StatusEffectManager`（单例，挂载在 Player 上）维护 `List<StatusEffect>`，每帧调用 `Update()` 并清理过期效果。
+
 ### 昼夜循环
 
 `DayNightCycle` 在 `dayDurationSeconds`（默认 300 秒）内将 `TimeOfDay` 从 0 循环到 1。驱动 `Camera.main.backgroundColor` 在白天/夜晚颜色之间过渡，并控制全屏黑色 `nightOverlay` Image 的透明度。夜晚定义为 `TimeOfDay < 0.2 || TimeOfDay > 0.8`。
@@ -73,11 +114,11 @@ TerraUnity Demo — 一个 2D 类泰拉瑞亚沙盒游戏，使用 **Unity 2022.
 ### 设置自动化
 
 - **编辑器**：`Tools > Setup Week 10 - Complete` 菜单项（位于 `Assets/Editor/Week10Setup.cs`）创建所有必需的场景对象、ScriptableObject 资源、家具 Tile 和 NPC Prefab。
-- **运行时**：`RuntimeWeek10Setup`（标记了 `[RuntimeInitializeOnLoadMethod]`）在首次场景加载时通过反射设置私有序列化字段，自动创建缺失的管理器（DayNightCycle、RoomDetector、ShopUI、家具 Tilemap）。
+- **运行时**：`RuntimeWeek10Setup`（标记了 `[RuntimeInitializeOnLoadMethod]`）在首次场景加载时通过反射设置私有序列化字段，自动创建缺失的管理器（DayNightCycle、RoomDetector、ShopUI、SaveManager、EnemySpawner、Minimap、家具 Tilemap）。
 
 ### 单例模式
 
-几乎所有管理器类都通过在 `Awake()` 中设置静态 `Instance` 属性使用 Unity 单例模式，并包含重复销毁逻辑。主要单例：`ChunkManager`、`PlayerInventory`、`PlayerEquipment`、`PlayerCurrency`、`PlayerStats`、`StatusEffectManager`、`TileDataManager`、`CraftingUI`、`InventoryUI`、`ShopUI`、`DayNightCycle`、`RoomDetector`。
+几乎所有管理器类都通过在 `Awake()` 中设置静态 `Instance` 属性使用 Unity 单例模式，并包含重复销毁逻辑。主要单例：`ChunkManager`、`PlayerInventory`、`PlayerEquipment`、`PlayerCurrency`、`PlayerStats`、`StatusEffectManager`、`TileDataManager`、`CraftingUI`、`InventoryUI`、`ShopUI`、`DayNightCycle`、`RoomDetector`、`SaveManager`、`Minimap`。
 
 ## 关键包
 

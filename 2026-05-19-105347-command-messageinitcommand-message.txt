@@ -1,0 +1,197 @@
+ ▐▛███▜▌   Claude Code v2.1.140
+▝▜█████▛▘  deepseek-v4-pro · API Usage Billing
+  ▘▘ ▝▝    D:\File\Game\Unity\Projects\TerraUnityDemo
+
+  Opus 4.7 xhigh is now available! · /model to switch
+
+❯ /init                                                                         
+
+● I'll analyze the current CLAUDE.md against the actual codebase to identify
+  gaps and suggest improvements. Let me explore the project structure first.
+
+  Searched for 2 patterns, read 1 file (ctrl+o to expand)
+
+● Let me look at files that aren't yet covered in the CLAUDE.md and recent
+  additions.
+
+  Read 6 files (ctrl+o to expand)
+
+● Let me check a few more files and recent git history to see what's been added
+  since the CLAUDE.md was last updated.
+
+  Read 3 files (ctrl+o to expand)
+
+● Bash(cd "D:\File\Game\Unity\Projects\TerraUnityDemo" && git log --oneline -20)
+  ⎿  d4f784e MiniMap
+     2a3cba2 Update Dev Progress Docs
+     749fea1 Enemy Spawner
+     … +17 lines (ctrl+o to expand)
+
+  Searched for 4 patterns, read 1 file (ctrl+o to expand)
+
+● Now I have a complete picture. The existing CLAUDE.md is solid but was written
+   before the Save/Load, Enemy Spawner, and Minimap systems were added (commits
+  b245fcc, 749fea1, d4f784e). I'll update it with these missing systems and fix
+  incomplete key bindings.
+
+● Update(CLAUDE.md)
+  ⎿  Added 1 line, removed 1 line
+      52  
+      53  所有主要 UI 面板（`InventoryUI`、`CraftingUI`、`ShopUI`、`Debug
+          ItemPanel`）**完全通过代码构建**——不使用 Prefab。它们调用 `Find
+          ObjectOfType<Canvas>()` 并以编程方式实例化 GameObject，包括 Rec
+          tTransform、Image、TextMeshProUGUI 文本、Button 以及 ScrollRect
+          /GridLayoutGroup 布局。如果 Canvas 上已存在匹配的子对象，则复用
+          它；否则从零创建。这意味着修改 UI 布局需要编辑 C# 代码而非 Unit
+          y 场景。
+      54  
+      55 -快捷键：**B** = 背包，**C** = 合成，**E** = 与 NPC 交互，**F1**
+         - = 调试物品面板，**U** = 召唤 NPC。                            
+      55 +快捷键：**B** = 背包，**C** = 合成，**E** = 与 NPC 交互，**F1**
+         + = 调试物品面板，**F5** = 手动存档（槽位 1），**F9** = 读档（优
+         +先级 1→2→3→0），**M** = 全屏地图，**U** = 召唤 NPC。           
+      56  
+      57  ### 敌人系统
+      58  
+
+● Update(CLAUDE.md)
+  ⎿  Added 41 lines
+       66  
+       67  `ShopData`（ScriptableObject）— 包含 `ShopItemEntry` 列表（物
+           品 + 库存数量，-1 = 无限）和出售价格倍率。
+       68  
+       69 +### 存档系统                                                  
+       70 +                                                              
+       71 +`SaveManager`（单例）使用 `JsonUtility` 序列化 `SaveData` 到 `
+          +Application.persistentDataPath/saves/save_slot_{n}.json`。    
+       72 +                                                              
+       73 +- **自动存档**：每 300 秒自动保存到槽位 0。                   
+       74 +- **手动存档**：按 **F5** 保存到槽位 1。                      
+       75 +- **读档**：按 **F9** 按优先级 1→2→3→0 查找存档并加载。       
+       76 +- **物品数据库**：`BuildItemDatabase()` 从 `Resources.LoadAll<
+          +ItemData>()` 构建 `Dictionary<int, ItemData>`，用于读档时通过 
+          +itemID 恢复物品引用。                                         
+       77 +- **死亡敌人追踪**：`deadEnemyKeys` 集合存储 `EnemyBase.DeathK
+          +ey`（格式：`"{TypeName}|{spawnX:F1}|{spawnY:F1}"`），读档时销 
+          +毁匹配的敌人对象。                                            
+       78 +- **存档内容**：世界种子、昼夜时间、已修改区块的 tile 数据、玩
+          +家位置/属性/货币/背包/装备、NPC 状态（位置、漫游方向、夜间消息
+          +标记）、死亡敌人列表。                                        
+       79 +- **加载流程**：先设置玩家位置 → 清空并重新生成区块 → 应用已修
+          +改区块的 tile 覆盖 → 恢复玩家属性/货币/背包/装备 → 恢复 NPC 状
+          +态 → 销毁已死亡敌人。                                         
+       80 +                                                              
+       81 +### 小地图系统                                                
+       82 +                                                              
+       83 +`Minimap`（单例）使用 CPU 端纹理渲染实现**战争迷雾**和**小地图
+          +/全屏地图**。按 **M** 切换全屏地图（关闭时显示角落地图）。    
+       84 +                                                              
+       85 +- **坐标系**：1 纹理像素 = 10 世界单位，迷雾纹理 420×120（覆盖
+          + 4200×1200 世界）。                                           
+       86 +- **颜色映射**：`tileID` -1 = 空气（深色），0 = 草地（绿），1 
+          += 泥土（棕），2 = 石头（灰）；未探索区域显示为深蓝色。        
+       87 +- **小地图**：150×150 的 RawImage，固定在右上角，以玩家为中心 
+          +显示 `minimapViewRadius`（默认 100）范围内的区域。            
+       88 +- **全屏地图**：600×380 面板，悬浮在屏幕中央，显示整个探索过的
+          +世界。包含图例和"显示敌人"切换按钮。敌人可以在全屏地图中隐藏以
+          +仅查看地形。                                                  
+       89 +- **实体标记**：玩家（青色十字）、NPC（绿色点）、敌人（红色点 
+          +）——每帧从 `FindObjectsOfType` 动态绘制。                     
+       90 +- **UI 构建**：完全通过代码构建（Canvas 子对象），与其他 UI 面
+          +板风格一致。                                                  
+       91 +                                                              
+       92 +### 敌人刷新                                                  
+       93 +                                                              
+       94 +`EnemySpawner` 在摄像机视野外的地表上生成史莱姆。通过从高空向 
+          +下扫描 `Tilemap_Ground` 查找地表 Y 坐标，确保生成位置在 Tile  
+          +上方且未被阻挡。受 `maxEnemies`（默认 10）和 `spawnInterval`（
+          +默认 5 秒）限制。                                             
+       95 +                                                              
+       96 +### 掉落物                                                    
+       97 +                                                              
+       98 +`ItemDrop` 在世界中以 SpriteRenderer 形式存在，显示物品图标。0
+          +.5 秒延迟后启用拾取，玩家靠近时磁吸移动（`pickupRange * 3` 范 
+          +围内），接触时自动加入背包。同时处理硬币价值和物品入包，支持部
+          +分拾取（背包满时剩余数量留在地上）。                          
+       99 +                                                              
+      100 +### 状态效果                                                  
+      101 +                                                              
+      102 +`StatusEffect` 是一个可序列化类（非 MonoBehaviour），子类通过 
+          +重写 `OnTick()` 实现具体效果：                                
+      103 +- `PoisonEffect`：10 秒，每秒造成 2 点伤害                    
+      104 +- `BurnEffect`：5 秒，每 0.5 秒造成 5 点伤害                  
+      105 +- `SlowEffect`：3 秒，仅改变移动速度                          
+      106 +- `RegenEffect`：8 秒，每秒回复 2 点 HP                       
+      107 +                                                              
+      108 +`StatusEffectManager`（单例，挂载在 Player 上）维护 `List<Stat
+          +usEffect>`，每帧调用 `Update()` 并清理过期效果。              
+      109 +                                                              
+      110  ### 昼夜循环
+      111  
+      112  `DayNightCycle` 在 `dayDurationSeconds`（默认 300 秒）内将 `Ti
+           meOfDay` 从 0 循环到 1。驱动 `Camera.main.backgroundColor` 在
+           白天/夜晚颜色之间过渡，并控制全屏黑色 `nightOverlay` Image 的
+           透明度。夜晚定义为 `TimeOfDay < 0.2 || TimeOfDay > 0.8`。
+
+● Update(CLAUDE.md)
+  ⎿  Added 1 line, removed 1 line
+      118  
+      119  ### 单例模式
+      120  
+      121 -几乎所有管理器类都通过在 `Awake()` 中设置静态 `Instance` 属性 
+          -使用 Unity 单例模式，并包含重复销毁逻辑。主要单例：`ChunkManag
+          -er`、`PlayerInventory`、`PlayerEquipment`、`PlayerCurrency`、`
+          -PlayerStats`、`StatusEffectManager`、`TileDataManager`、`Craft
+          -ingUI`、`InventoryUI`、`ShopUI`、`DayNightCycle`、`RoomDetecto
+          -r`。                                                          
+      121 +几乎所有管理器类都通过在 `Awake()` 中设置静态 `Instance` 属性 
+          +使用 Unity 单例模式，并包含重复销毁逻辑。主要单例：`ChunkManag
+          +er`、`PlayerInventory`、`PlayerEquipment`、`PlayerCurrency`、`
+          +PlayerStats`、`StatusEffectManager`、`TileDataManager`、`Craft
+          +ingUI`、`InventoryUI`、`ShopUI`、`DayNightCycle`、`RoomDetecto
+          +r`、`SaveManager`、`Minimap`。                                
+      122  
+      123  ## 关键包
+      124  
+
+● Update(CLAUDE.md)
+  ⎿  Added 1 line, removed 1 line
+      114  ### 设置自动化
+      115  
+      116  - **编辑器**：`Tools > Setup Week 10 - Complete` 菜单项（位于 
+           `Assets/Editor/Week10Setup.cs`）创建所有必需的场景对象、Script
+           ableObject 资源、家具 Tile 和 NPC Prefab。
+      117 -- **运行时**：`RuntimeWeek10Setup`（标记了 `[RuntimeInitialize
+          -OnLoadMethod]`）在首次场景加载时通过反射设置私有序列化字段，自
+          -动创建缺失的管理器（DayNightCycle、RoomDetector、ShopUI、家具 
+          -Tilemap）。                                                   
+      117 +- **运行时**：`RuntimeWeek10Setup`（标记了 `[RuntimeInitialize
+          +OnLoadMethod]`）在首次场景加载时通过反射设置私有序列化字段，自
+          +动创建缺失的管理器（DayNightCycle、RoomDetector、ShopUI、SaveM
+          +anager、EnemySpawner、Minimap、家具 Tilemap）。               
+      118  
+      119  ### 单例模式
+      120  
+
+● Let me verify the final file.
+
+  Read 1 file (ctrl+o to expand)
+
+● CLAIDE.md 已更新。以下是新增和修改的内容：
+
+  新增的章节：
+  - 存档系统 — SaveManager
+  的自动/手动存档（F5/F9）、物品数据库、死亡敌人追踪、存档内容结构、加载流程顺序
+  - 小地图系统 — Minimap 的战争迷雾、坐标映射、颜色编码、角落地图与全屏地图（M
+  键切换）、实体标记
+  - 敌人刷新 — EnemySpawner 的地表扫描生成逻辑
+  - 掉落物 — ItemDrop 的磁吸拾取和部分拾取机制
+  - 状态效果 — StatusEffect 类继承体系和四种具体效果（Poison/Burn/Slow/Regen）
+
+  更新的内容：
+  - 快捷键列表新增 F5（存档）、F9（读档）、M（全屏地图）
+  - 单例列表新增 SaveManager 和 Minimap
+  - RuntimeWeek10Setup
+  描述中新增了自动创建的管理器（SaveManager、EnemySpawner、Minimap）
+
+✻ Brewed for 3m 3s
